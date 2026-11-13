@@ -1,0 +1,35 @@
+[package]
+name = "sijaga_backend"
+version = "1.0.0"
+edition = "2021"
+authors = ["Yusuf", "Dr. Erliyan Redy Susanto, M.Kom"]
+description = "Backend REST API untuk SIJAGA SAMPAH - Sistem Informasi Jaga Kebersihan dan Pengelolaan Sampah Kota"
+
+[dependencies]
+# HTTP Web Framework & Async Runtime
+axum = { version = "0.7.5", features = ["multipart", "macros"] }
+tokio = { version = "1.38.0", features = ["full"] }
+tower = { version = "0.4.13", features = ["util"] }
+tower-http = { version = "0.5.2", features = ["cors", "trace", "fs"] }
+
+# Database PostgreSQL & SQLx
+sqlx = { version = "0.7.4", features = ["runtime-tokio-rustls", "postgres", "uuid", "chrono", "json", "migrate", "rust_decimal"] }
+rust_decimal = { version = "1.35", features = ["serde-float"] }
+
+# Serialization & Models
+serde = { version = "1.0.203", features = ["derive"] }
+serde_json = "1.0.117"
+uuid = { version = "1.8.0", features = ["v4", "serde"] }
+chrono = { version = "0.4.38", features = ["serde"] }
+
+# Security, Hashing & JWT
+argon2 = { version = "0.5.3", features = ["std"] }
+jsonwebtoken = "9.3.0"
+rand = "0.8.5"
+
+# Environment & Observability
+dotenvy = "0.15.7"
+tracing = "0.1.40"
+tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
+thiserror = "1.0.61"
+async-trait = "0.1.80"

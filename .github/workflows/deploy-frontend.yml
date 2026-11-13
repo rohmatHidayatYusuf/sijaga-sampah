@@ -1,0 +1,51 @@
+name: 🚀 Deploy Frontend ke Vercel
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'frontend/**'
+      - '.github/workflows/deploy-frontend.yml'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'frontend/**'
+
+jobs:
+  deploy:
+    name: Deploy ke Vercel
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout kode
+        uses: actions/checkout@v4
+
+      - name: 🔍 Verifikasi file frontend
+        run: |
+          echo "=== Struktur frontend ==="
+          ls -la frontend/
+          echo "=== Vercel config ==="
+          cat frontend/vercel.json
+
+      - name: ☁️ Deploy ke Vercel (Preview — PR)
+        if: github.event_name == 'pull_request'
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          working-directory: ./frontend
+          scope: ${{ secrets.VERCEL_ORG_ID }}
+
+      - name: 🌐 Deploy ke Vercel (Production — main branch)
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          vercel-args: '--prod'
+          working-directory: ./frontend
+          scope: ${{ secrets.VERCEL_ORG_ID }}

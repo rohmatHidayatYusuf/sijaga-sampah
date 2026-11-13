@@ -1,0 +1,47 @@
+# ===========================
+# SIJAGA SAMPAH — .gitignore
+# ===========================
+
+# --- Environment & Secrets ---
+.env
+.env.local
+.env.production
+*.env
+
+# --- Rust / Backend ---
+backend/target/
+backend/Cargo.lock
+**/*.rs.bk
+
+# --- Node / Frontend tooling ---
+node_modules/
+.npm/
+npm-debug.log*
+
+# --- Vercel ---
+.vercel/
+
+# --- OS Files ---
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# --- IDE ---
+.vscode/settings.json
+.idea/
+*.suo
+*.user
+
+# --- Logs ---
+*.log
+logs/
+
+# --- Build outputs ---
+dist/
+build/
+
+# --- Report & doc generations (keep the scripts, ignore generated output) ---
+*.docx
+*.pdf
+__pycache__/
+*.pyc

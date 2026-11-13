@@ -1,0 +1,164 @@
+[
+  {
+    "id": "TC-01",
+    "category": "Frontend Web",
+    "scenario": "Pemuatan halaman utama index.html",
+    "steps": "Akses GET http://localhost:3000/index.html",
+    "expected": "HTTP 200 OK dan memuat dokumen HTML aplikasi",
+    "actual": "HTTP 200, memuat dokumen (35433 bytes)",
+    "status": "PASS"
+  },
+  {
+    "id": "TC-02",
+    "category": "Branding & UI",
+    "scenario": "Ketersediaan Logo Pemda dan Universitas Teknokrat Indonesia",
+    "steps": "Akses berkas SVG logo Pemda & Teknokrat via HTTP",
+    "expected": "Kedua logo resmi berformat SVG tersedia (HTTP 200)",
+    "actual": "Logo Pemda: HTTP 200, Logo Teknokrat: HTTP 200",
+    "status": "PASS"
+  },
+  {
+    "id": "TC-03",
+    "category": "Kepatuhan PRD",
+    "scenario": "Tampilan Footer Wajib di Seluruh Halaman",
+    "steps": "Periksa teks footer persis sesuai PRD Bagian 12.8 di index.html",
+    "expected": "Mengandung teks 'Copyright©2026 by Yusuf dan Dr. Erliyan Redy Susanto, M.Kom'",
+    "actual": "Teks ditemukan: True",
+    "status": "PASS"
+  },
+  {
+    "id": "TC-04",
+    "category": "UI/UX & Identity",
+    "scenario": "Tampilan Identitas Nama dan Badge Peran Pengguna di Header",
+    "steps": "Periksa keberadaan elemen #header-user-name dan #header-user-role di DOM",
+    "expected": "Elemen identitas profil pengguna dan badge peran tersedia di header",
+    "actual": "header-user-name=True, header-user-role=True",
+    "status": "PASS"
+  },
+  {
+    "id": "TC-05",
+    "category": "PWA Feature",
+    "scenario": "Integritas Berkas manifest.json",
+    "steps": "Validasi struktur dan konfigurasi PWA manifest",
+    "expected": "name='SIJAGA SAMPAH...' dan display='standalone'",
+    "actual": "Name: SIJAGA SAMPAH - Sistem Informasi Jaga Kebersihan Kota, Display: standalone",
+    "status": "PASS"
+  },
+  {
+    "id": "TC-06",
+    "category": "Domain Logic",
+    "scenario": "Validasi Siklus Transisi Status Laporan (State Machine)",
+    "steps": "Uji 13 transisi valid dan 5 transisi ilegal sesuai PRD 6.1",
+    "expected": "Transisi sah diterima, transisi tidak sah ditolak",
+    "actual": "Semua 13 transisi valid lulus & 5 ilegal tertolak",
+    "status": "PASS"
+  },
+  {
+    "id": "TC-07",
+    "category": "Format Standar",
+    "scenario": "Validasi Format Nomor Tiket Unik",
+    "steps": "Periksa kesesuaian format regex ^SJG-YYYY-XXXXXX$",
+    "expected": "Format nomor tiket harus SJG-YYYY-XXXXXX",
+    "actual": "Validasi regex pattern ^SJG-\\d{4}-\\d{6}$ berhasil",
+    "status": "PASS"
+  },
+  {
+    "id": "TC-08",
+    "category": "Validasi Input",
+    "scenario": "Validasi Rentang Koordinat Latitude/Longitude",
+    "steps": "Uji koordinat sah batas (-90, 180) dan di luar batas (-90.1, 185.0)",
+    "expected": "Koordinat di luar [-90,90] dan [-180,180] ditolak sistem",
+    "actual": "Batas koordinat tervalidasi dengan akurat",
+    "status": "PASS"
+  },
+  {
+    "id": "TC-09",
+    "category": "Aturan Bisnis",
+    "scenario": "Kewajiban Alasan Penolakan dan Pembukaan Kembali Laporan",
+    "steps": "Evaluasi pengisian alasan verifikasi tolak dan pembukaan kembali",
+    "expected": "Alasan penolakan / pembukaan kembali wajib diisi (tidak boleh kosong)",
+    "actual": "Validasi string alasan berfungsi dengan benar",
+    "status": "PASS"
+  },
+  {
+    "id": "TC-10-warga",
+    "category": "Otorisasi RBAC",
+    "scenario": "Validasi Hak Akses Peran: WARGA",
+    "steps": "Evaluasi matriks izin peran warga pada fungsi verifikasi, penugasan, penutupan, eksekusi tugas, ekspor",
+    "expected": "Akses sesuai PRD Bagian 4 & Bagian 13.2",
+    "actual": "Izin terverifikasi: Verify=False, Assign=False, Close=False, Export=False",
+    "status": "PASS"
+  },
+  {
+    "id": "TC-10-petugas",
+    "category": "Otorisasi RBAC",
+    "scenario": "Validasi Hak Akses Peran: PETUGAS",
+    "steps": "Evaluasi matriks izin peran petugas pada fungsi verifikasi, penugasan, penutupan, eksekusi tugas, ekspor",
+    "expected": "Akses sesuai PRD Bagian 4 & Bagian 13.2",
+    "actual": "Izin terverifikasi: Verify=False, Assign=False, Close=False, Export=False",
+    "status": "PASS"
+  },
+  {
+    "id": "TC-10-operator",
+    "category": "Otorisasi RBAC",
+    "scenario": "Validasi Hak Akses Peran: OPERATOR",
+    "steps": "Evaluasi matriks izin peran operator pada fungsi verifikasi, penugasan, penutupan, eksekusi tugas, ekspor",
+    "expected": "Akses sesuai PRD Bagian 4 & Bagian 13.2",
+    "actual": "Izin terverifikasi: Verify=True, Assign=True, Close=True, Export=True",
+    "status": "PASS"
+  },
+  {
+    "id": "TC-10-pimpinan",
+    "category": "Otorisasi RBAC",
+    "scenario": "Validasi Hak Akses Peran: PIMPINAN",
+    "steps": "Evaluasi matriks izin peran pimpinan pada fungsi verifikasi, penugasan, penutupan, eksekusi tugas, ekspor",
+    "expected": "Akses sesuai PRD Bagian 4 & Bagian 13.2",
+    "actual": "Izin terverifikasi: Verify=False, Assign=False, Close=False, Export=True",
+    "status": "PASS"
+  },
+  {
+    "id": "TC-10-admin",
+    "category": "Otorisasi RBAC",
+    "scenario": "Validasi Hak Akses Peran: ADMIN",
+    "steps": "Evaluasi matriks izin peran admin pada fungsi verifikasi, penugasan, penutupan, eksekusi tugas, ekspor",
+    "expected": "Akses sesuai PRD Bagian 4 & Bagian 13.2",
+    "actual": "Izin terverifikasi: Verify=True, Assign=True, Close=True, Export=True",
+    "status": "PASS"
+  },
+  {
+    "id": "TC-11",
+    "category": "UI/UX & Filter",
+    "scenario": "Kelengkapan Opsi Filter Status dan Modal Laporan",
+    "steps": "Periksa ketersediaan opsi status 'under_review', 'closed', 'reopened' dan modal close/reopen",
+    "expected": "Seluruh opsi status PRD dan modal interaktif tersedia di DOM",
+    "actual": "Status filter lengkap=True, modal close & reopen tersedia",
+    "status": "PASS"
+  },
+  {
+    "id": "TC-12",
+    "category": "Dashboard Analytics",
+    "scenario": "Kalkulasi Rasio Penyelesaian Pengaduan (Resolution Rate)",
+    "steps": "Hitung rasio (resolved+closed)/total pada 7 laporan sampel",
+    "expected": "Total=7, Selesai=2, Rasio=28.6%",
+    "actual": "Total=7, Selesai=2, Rasio=28.6%",
+    "status": "PASS"
+  },
+  {
+    "id": "TC-13",
+    "category": "Backend Rust",
+    "scenario": "Integritas Dependensi Cargo.toml (rust_decimal)",
+    "steps": "Periksa keberadaan pustaka rust_decimal pada backend/Cargo.toml",
+    "expected": "rust_decimal terdaftar untuk mendukung tipe data numerik koordinat",
+    "actual": "rust_decimal terdaftar=True",
+    "status": "PASS"
+  },
+  {
+    "id": "TC-14",
+    "category": "Keamanan Backend",
+    "scenario": "Pemberlakuan Otorisasi Server-Side (IDOR Prevention)",
+    "steps": "Periksa validasi hak kepemilikan dan hak petugas pada update_status dan reopen_report",
+    "expected": "Hanya petugas terkait atau operator/admin yang diizinkan mengubah status",
+    "actual": "Pengecekan otorisasi IDOR terpasang=True",
+    "status": "PASS"
+  }
+]

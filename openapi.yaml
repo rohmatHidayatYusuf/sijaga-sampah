@@ -1,0 +1,285 @@
+openapi: 3.0.3
+info:
+  title: SIJAGA SAMPAH REST API
+  description: API Pengelolaan Kebersihan dan Pengaduan Sampah Kota (Rust Axum + PostgreSQL)
+  version: 1.0.0
+  contact:
+    name: Yusuf & Dr. Erliyan Redy Susanto, M.Kom
+servers:
+  - url: http://localhost:8080/api/v1
+    description: Server Pengembangan Lokal
+
+paths:
+  /auth/register:
+    post:
+      summary: Registrasi akun baru (Warga)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [full_name, email, password]
+              properties:
+                full_name:
+                  type: string
+                email:
+                  type: string
+                  format: email
+                phone:
+                  type: string
+                password:
+                  type: string
+                  minLength: 8
+      responses:
+        '201':
+          description: Akun berhasil didaftarkan
+  /auth/login:
+    post:
+      summary: Masuk ke dalam sistem
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Berhasil login, mengembalikan token JWT
+  /auth/me:
+    get:
+      summary: Ambil profil dan peran pengguna aktif
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Profil pengguna aktif
+  /reports:
+    get:
+      summary: Daftar laporan pengaduan sampah
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+        - name: category_id
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - name: region_id
+          in: query
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Daftar laporan terfilter
+    post:
+      summary: Membuat laporan pengaduan sampah baru
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [category_id, title, description]
+              properties:
+                category_id:
+                  type: string
+                  format: uuid
+                region_id:
+                  type: string
+                  format: uuid
+                title:
+                  type: string
+                description:
+                  type: string
+                address_text:
+                  type: string
+                latitude:
+                  type: number
+                longitude:
+                  type: number
+      responses:
+        '201':
+          description: Laporan tersimpan dengan nomor tiket unik
+  /reports/{id}:
+    get:
+      summary: Ambil detail lengkap laporan dan linimasa status
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Detail laporan
+  /reports/{id}/verify:
+    post:
+      summary: Verifikasi laporan oleh Operator
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                priority:
+                  type: string
+                  enum: [low, normal, high, urgent]
+                note:
+                  type: string
+      responses:
+        '200':
+          description: Laporan diverifikasi
+  /reports/{id}/reject:
+    post:
+      summary: Tolak laporan oleh Operator dengan alasan wajib
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [reason]
+              properties:
+                reason:
+                  type: string
+      responses:
+        '200':
+          description: Laporan ditolak
+  /reports/{id}/assignments:
+    post:
+      summary: Menugaskan petugas kebersihan ke laporan
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [assignee_id]
+              properties:
+                assignee_id:
+                  type: string
+                  format: uuid
+                instructions:
+                  type: string
+                priority:
+                  type: string
+      responses:
+        '200':
+          description: Petugas berhasil ditugaskan
+  /tasks/my:
+    get:
+      summary: Ambil daftar penugasan aktif milik petugas kebersihan yang login
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Daftar tugas lapangan
+  /tasks/{id}/accept:
+    post:
+      summary: Petugas menerima tugas dan mulai pengerjaan (In Progress)
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Status tugas diubah ke in_progress
+  /tasks/{id}/evidence:
+    post:
+      summary: Petugas mengunggah bukti dan menyelesaikan tugas (Resolved)
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                notes:
+                  type: string
+                evidence_file_key:
+                  type: string
+      responses:
+        '200':
+          description: Tugas diselesaikan
+  /dashboard/summary:
+    get:
+      summary: Ringkasan KPI eksekutif dan statistik operasional
+      responses:
+        '200':
+          description: Ringkasan metrik laporan
+  /dashboard/map-points:
+    get:
+      summary: Titik koordinat laporan untuk visualisasi peta
+      responses:
+        '200':
+          description: Daftar koordinat dan status
+  /reports/export:
+    get:
+      summary: Ekspor data laporan persampahan ke format CSV
+      responses:
+        '200':
+          description: Berkas CSV
+          content:
+            text/csv:
+              schema:
+                type: string
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

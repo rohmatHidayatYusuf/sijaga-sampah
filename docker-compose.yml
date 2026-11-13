@@ -1,0 +1,54 @@
+services:
+  # Database PostgreSQL
+  postgres:
+    image: postgres:16-alpine
+    container_name: sijaga-postgres
+    restart: always
+    environment:
+      POSTGRES_DB: sijaga_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password123
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./backend/migrations/0001_initial_schema.sql:/docker-entrypoint-initdb.d/01_schema.sql
+      - ./backend/migrations/0002_seed_data.sql:/docker-entrypoint-initdb.d/02_seed.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d sijaga_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # Backend Rust (Axum + SQLx)
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: sijaga-backend
+    restart: always
+    environment:
+      HOST: 0.0.0.0
+      PORT: 8080
+      DATABASE_URL: postgres://postgres:password123@postgres:5432/sijaga_db
+      JWT_SECRET: sijaga_sampah_super_secret_jwt_key_2026_change_me
+      JWT_EXPIRATION_HOURS: 24
+      UPLOAD_DIR: /app/uploads
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  # Frontend Web Responsif / PWA
+  frontend:
+    image: nginx:alpine
+    container_name: sijaga-frontend
+    restart: always
+    ports:
+      - "3000:80"
+    volumes:
+      - ./frontend:/usr/share/nginx/html:ro
+
+volumes:
+  pgdata:
